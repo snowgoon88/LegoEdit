@@ -7,3 +7,5 @@ The idea is to add a "palette" to LDCad with all the parts of a given official L
 * lua-socket
 * lua-sec
 
+## some MOC in docs
+* X-Tie, from set no 75168
