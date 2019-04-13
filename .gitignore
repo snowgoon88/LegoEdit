@@ -1,3 +1,7 @@
+# Models and Sets
+/Models/
+/AllSets/
+
 # Compiled Lua sources
 luac.out
 
