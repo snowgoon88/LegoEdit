@@ -1,0 +1,4 @@
+* TODO [0/3] req.lua
+** TODO use arguments
+** TODO convert jpg to png if needed
+** TODO update/install command to copy files and modify sets.pbg file
