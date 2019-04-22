@@ -11,6 +11,7 @@ require ("socket")
 local https = require( "ssl.https" )
 require( "os" )
 local json = require( "myjson" )
+require ("parts")
 
 -- TODO: need to use arguments
 _numset = "75168-1"
@@ -22,10 +23,15 @@ _SNOWGOON88_APIKEY = "e70c7ac04d6e734aca8d3b60b10a16da"
 _replacement = {
    ["3010apr0004"] = "3010p04",
    ["3626apr0001"] = "3026ap01",
+   ["3626cpr1001"] = "3626cp02",
    ["3933a"] = "3933",
    ["3934a"] = "3934",
    ["3940a"] = "3940",
    ["4287a"] = "4287",
+   ["14769pr1002"] = "14769",
+   ["14769pr1003"] = "14769",
+   ["15456"] = "3731",
+   ["32474pr1001"] = "32474p01",
 }
 
 
@@ -128,6 +134,36 @@ local function add_parts( url, out )
    end
 end
 -- *****************************************************************************
+local function merge_parts( url, parts_t )
+   local body, code, headers, status = https.request( url )
+   
+   -- OK
+   if code == 200 then
+      local parts = json.parse( body )
+
+      for i,p in ipairs( parts.results ) do
+         local msg = get_ldcad_part(p.part.part_num) .. ".dat"
+         local msg = msg .. ":[color=" .. tostring(p.color.id) .. "]"
+         local msg = msg .. " [count=" .. tostring(p.quantity) .. "]"
+         local msg = msg .. " [desc=" .. tostring(p.part.name) .. "]"
+         --print( i, " : ", msg )
+         Parts.store_parts( parts_t,
+                            get_ldcad_part(p.part.part_num),
+                            p.color.id,
+                            p.part.name,
+                            p.quantity )
+      end
+      
+      -- check if recursive call
+      if parts.next == json.null then
+         return
+      else
+         merge_parts( parts.next, parts_t )
+      end
+   else
+      print( "***** PB in http.request *****" )
+   end
+end
 
 -- *****************************************************************************
 -- *********************************************************** write to file.pbg
@@ -144,6 +180,21 @@ write_pbg_file = function( num_set, filename, label )
    local fpbg = assert( io.open( tostring(num_set) .. ".pbg", "w" ))
    fpbg:write( header_str( num_set, label ))
 
+   local baseurl = base_url( num_set )
+   print( "__URL\n", baseurl )
+   add_parts( baseurl, fpbg)
+
+   fpbg:close()
+end
+
+local function write_parts_to_pbg( parts_t, filename, label )
+   local fpbg = assert( io.open( tostring(filename) .. ".pbg", "w" ))
+   fpbg:write( header_str( label, label ))
+
+   for _,part in pairs( parts_t ) do
+      fpbg:write( Parts.to_pbg_str( part ) )
+   end
+   
    local baseurl = base_url( num_set )
    print( "__URL\n", baseurl )
    add_parts( baseurl, fpbg)
@@ -172,9 +223,24 @@ print( "__IMAGE" )
 print( "  err=" .. tostring( get_image( "6929-1" )))
 --]]
 -- *****************************************************************************
-
+--[[previous use
 local baseurl = base_url( _numset )
 print( "__URL\n", baseurl )
 get_image( _numset )
 write_pbg_file( _numset )
+--]]
+
+-- *****************************************************************************
+-- ********************************************************************* testing
+_numsets = {"41524-1", "41525-1", "41526-1" }
+local _parts = Parts.new()
+for _,numset in pairs( _numsets ) do
+   local baseurl = base_url( numset )
+   print( "__URL\n", baseurl )
+   merge_parts( baseurl, _parts )
+end
+Parts.dump_parts( _parts )
+write_parts_to_pbg( _parts, "mixels_violet", "mixels_violet" )
+
+   
 
