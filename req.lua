@@ -20,7 +20,7 @@ optargs = require( "optarg" )
 _opthelp = [[
 Options:
  -h, --help            Display options
- -p, --pictname=NAME   Name of picture file
+ -f, --filename=NAME   Name of parts file
  -l, --label=NAME      Label of this groups of parts
 
 Note that leading space is required for options.
@@ -36,7 +36,7 @@ if #args == 0 or opts.help then
 	os.exit(opts and 1 or 0)
 end
 
-_pictname = opts.pictname or "pic_lego"
+_filename = opts.filename or "file_lego"
 _label = opts.label or "lab_lego"
 
 for k,v in pairs(opts) do
@@ -56,8 +56,6 @@ print( "sets=" )
 for _,numset in pairs( _numsets ) do
    print( "  ",numset )
 end
-
-os.exit()
 -- *****************************************************************************
 
 
@@ -71,6 +69,7 @@ _SNOWGOON88_APIKEY = "e70c7ac04d6e734aca8d3b60b10a16da"
 
 -- known replacement parts
 _replacement = {
+   ["2850b"] = "2850",
    ["3010apr0004"] = "3010p04",
    ["3626apr0001"] = "3026ap01",
    ["3626cpr1001"] = "3626cp02",
@@ -78,10 +77,16 @@ _replacement = {
    ["3934a"] = "3934",
    ["3940a"] = "3940",
    ["4287a"] = "4287",
+   ["10314"] = "6191",
+   ["11055"] = "2335",
    ["14769pr1002"] = "14769",
    ["14769pr1003"] = "14769",
    ["15456"] = "3731",
    ["32474pr1001"] = "32474p01",
+   ["57909b"] = "57909",
+   ["61254"] = "3483",
+   ["92013"] = "62712",
+
 }
 
 
@@ -282,8 +287,8 @@ write_pbg_file( _numset )
 
 -- *****************************************************************************
 -- ********************************************************************* testing
-_numsets = {"41524-1", "41525-1", "41526-1" }
-_numsets = {"31062-1"}
+--_numsets = {"41524-1", "41525-1", "41526-1" }
+--_numsets = {"31062-1"}
 local _parts = Parts.new()
 for _,numset in pairs( _numsets ) do
    local baseurl = base_url( numset )
@@ -291,7 +296,7 @@ for _,numset in pairs( _numsets ) do
    merge_parts( baseurl, _parts )
 end
 Parts.dump_parts( _parts )
-write_parts_to_pbg( _parts, "31062-1", "31062-1" )
+write_parts_to_pbg( _parts, _filename, _label ) --"31062-1", "31062-1" )
 get_image( _numsets[1] ) -- start at 1
 
 
