@@ -65,6 +65,7 @@ end
 
 -- *****************************************************************************
 -- ************************************************************************ test
+--[[
 print( "__START" )
 local _all_parts = Parts.new()
 Parts.dump_parts( _all_parts )
@@ -83,5 +84,6 @@ Parts.dump_parts( _all_parts )
 
 Parts.store_parts( _all_parts, 25, 27, "Une plaque 1x8", 7 )
 Parts.dump_parts( _all_parts )
+--]]
 
 
