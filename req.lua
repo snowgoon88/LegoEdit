@@ -13,11 +13,61 @@ require( "os" )
 local json = require( "myjson" )
 require ("parts")
 
+-- *****************************************************************************
+-- ************************************************************************ ARGS
+optargs = require( "optarg" )
+
+_opthelp = [[
+Options:
+ -h, --help            Display options
+ -p, --pictname=NAME   Name of picture file
+ -l, --label=NAME      Label of this groups of parts
+
+Note that leading space is required for options.
+Option parsing is stopped at '--'.
+
+]]
+
+opts, args = optargs.from_opthelp( _opthelp )
+
+if #args == 0 or opts.help then
+	print(("Usage: %s [options] [--] [SET1 SET2 ...]"):format(_G.arg[0]))
+	print(_opthelp)
+	os.exit(opts and 1 or 0)
+end
+
+_pictname = opts.pictname or "pic_lego"
+_label = opts.label or "lab_lego"
+
+for k,v in pairs(opts) do
+	print ("option:", k,"value:",v)
+end
+
+_numsets = {}
+print( ("#args = %i"):format( #args ))
+for i =1, #args do
+   print(("args[%i]:\t%s"):format(i,args[i]))
+   table.insert( _numsets, args[i] )
+end
+
+print( "pic=", _pictname )
+print( "lab=", _label )
+print( "sets=" )
+for _,numset in pairs( _numsets ) do
+   print( "  ",numset )
+end
+
+os.exit()
+-- *****************************************************************************
+
+
 -- TODO: need to use arguments
 _numset = "75168-1"
 
 -- my personnal key
 _SNOWGOON88_APIKEY = "e70c7ac04d6e734aca8d3b60b10a16da"
+
+
 
 -- known replacement parts
 _replacement = {
@@ -233,6 +283,7 @@ write_pbg_file( _numset )
 -- *****************************************************************************
 -- ********************************************************************* testing
 _numsets = {"41524-1", "41525-1", "41526-1" }
+_numsets = {"31062-1"}
 local _parts = Parts.new()
 for _,numset in pairs( _numsets ) do
    local baseurl = base_url( numset )
@@ -240,7 +291,7 @@ for _,numset in pairs( _numsets ) do
    merge_parts( baseurl, _parts )
 end
 Parts.dump_parts( _parts )
-write_parts_to_pbg( _parts, "mixels_violet", "mixels_violet" )
+write_parts_to_pbg( _parts, "31062-1", "31062-1" )
+get_image( _numsets[1] ) -- start at 1
 
-   
 

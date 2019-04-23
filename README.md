@@ -6,6 +6,5 @@ The idea is to add a "palette" to LDCad with all the parts of a given official L
 ## req.lua dependencies
 * lua-socket
 * lua-sec
+* optarg.lua from  https://github.com/ncopa/lua-optarg
 
-## some MOC in docs
-* X-Tie, from set no 75168
